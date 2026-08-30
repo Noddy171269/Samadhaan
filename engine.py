@@ -7,10 +7,11 @@ contact cap) run BEFORE any recovery or interest logic — that ordering is the
 whole point and must not be reordered.
 """
 
-import calendar
 from dataclasses import dataclass
 from datetime import date, timedelta
 from enum import Enum
+
+from dateutil.relativedelta import relativedelta
 
 # --- Named, auditable constants -------------------------------------------
 
@@ -93,34 +94,6 @@ def appointed_day(invoice: Invoice) -> date:
     return due_date + timedelta(days=1)
 
 
-def _add_months(anchor: date, months: int) -> date:
-    """Shift `anchor` forward by whole `months`, clamping to the month's last day.
-
-    Stdlib equivalent of the month arithmetic dateutil.relativedelta performs
-    (e.g. Jan 31 + 1 month -> Feb 28/29), so we need no third-party dependency.
-    """
-    total = anchor.month - 1 + months
-    year = anchor.year + total // 12
-    month = total % 12 + 1
-    last_day = calendar.monthrange(year, month)[1]
-    return date(year, month, min(anchor.day, last_day))
-
-
-def _months_and_days(start: date, end: date) -> tuple[int, int]:
-    """Split the span from `start` to `end` into (whole calendar months, leftover days).
-
-    Calendar-accurate — NOT a fixed 30-day approximation — so accrual is
-    reproducible and defensible against a hand check.
-    """
-    if end <= start:
-        return 0, 0
-    months = (end.year - start.year) * 12 + (end.month - start.month)
-    if end.day < start.day:
-        months -= 1  # the final month hasn't fully elapsed yet
-    leftover_days = (end - _add_months(start, months)).days
-    return months, leftover_days
-
-
 def statutory_interest(invoice: Invoice, as_of: date) -> float:
     """MSMED Section 16 statutory interest owed as of a given date, day-accurate.
 
@@ -145,7 +118,12 @@ def statutory_interest(invoice: Invoice, as_of: date) -> float:
     monthly_rate = annual_rate / 12
     daily_rate = annual_rate / 365  # actual/365 day-count convention
 
-    whole_months, leftover_days = _months_and_days(ad, as_of)
+    # Calendar-accurate split into whole months + leftover days (NOT 30-day
+    # blocks). relativedelta clamps end-of-month correctly (Jan 31 + 1 month =
+    # Feb 28/29), which a hand-rolled counter gets subtly wrong.
+    delta = relativedelta(as_of, ad)
+    whole_months = delta.years * 12 + delta.months
+    leftover_days = delta.days
 
     # Step 1: compound the whole months.
     balance = invoice.amount * (1 + monthly_rate) ** whole_months

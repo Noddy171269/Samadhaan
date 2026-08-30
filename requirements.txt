@@ -1,0 +1,4 @@
+# Calendar-accurate month/day arithmetic for MSMED statutory-interest accrual
+# (engine.statutory_interest). Chosen over a hand-rolled counter because
+# relativedelta clamps end-of-month boundaries correctly and is defensible.
+python-dateutil>=2.9
