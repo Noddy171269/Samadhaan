@@ -7,6 +7,7 @@ contact cap) run BEFORE any recovery or interest logic — that ordering is the
 whole point and must not be reordered.
 """
 
+import calendar
 from dataclasses import dataclass
 from datetime import date, timedelta
 from enum import Enum
@@ -92,32 +93,67 @@ def appointed_day(invoice: Invoice) -> date:
     return due_date + timedelta(days=1)
 
 
-def _whole_months(start: date, end: date) -> int:
-    """Whole calendar months elapsed from `start` to `end` (partial months dropped)."""
+def _add_months(anchor: date, months: int) -> date:
+    """Shift `anchor` forward by whole `months`, clamping to the month's last day.
+
+    Stdlib equivalent of the month arithmetic dateutil.relativedelta performs
+    (e.g. Jan 31 + 1 month -> Feb 28/29), so we need no third-party dependency.
+    """
+    total = anchor.month - 1 + months
+    year = anchor.year + total // 12
+    month = total % 12 + 1
+    last_day = calendar.monthrange(year, month)[1]
+    return date(year, month, min(anchor.day, last_day))
+
+
+def _months_and_days(start: date, end: date) -> tuple[int, int]:
+    """Split the span from `start` to `end` into (whole calendar months, leftover days).
+
+    Calendar-accurate — NOT a fixed 30-day approximation — so accrual is
+    reproducible and defensible against a hand check.
+    """
     if end <= start:
-        return 0
+        return 0, 0
     months = (end.year - start.year) * 12 + (end.month - start.month)
     if end.day < start.day:
-        months -= 1  # not a full month yet
-    return max(months, 0)
+        months -= 1  # the final month hasn't fully elapsed yet
+    leftover_days = (end - _add_months(start, months)).days
+    return months, leftover_days
 
 
 def statutory_interest(invoice: Invoice, as_of: date) -> float:
-    """MSMED Section 16 statutory interest owed as of a given date.
+    """MSMED Section 16 statutory interest owed as of a given date, day-accurate.
 
     Medium enterprises are excluded from Section 16 — returning anything but 0
-    for them would be a legally false claim. Nothing accrues before the
-    appointed day. Interest compounds monthly at 3x the RBI bank rate.
+    for them would be a legally false claim. Nothing accrues on or before the
+    appointed day. Elapsed time is split into whole months (compounded monthly)
+    plus leftover days (simple interest on the compounded balance), so a 31-day
+    and a 50-day overdue invoice no longer collapse to the same "1 month".
+
+    Worked check: principal 200000 at 3x5.50%=16.5%, 1 month + 20 days ->
+      after 1 month:  200000 * 1.01375           = 202750
+      leftover 20d:   202750 * (0.165/365) * 20  ~= 1833
+      total interest                             ~= 4583  (vs 2750 whole-month-only)
     """
     if invoice.vendor_class == "MEDIUM":
         return 0.0  # excluded from Section 16
     ad = appointed_day(invoice)
-    if as_of < ad:
-        return 0.0  # nothing accrues before the appointed day
+    if as_of <= ad:
+        return 0.0  # nothing accrues on or before the appointed day
+
     annual_rate = 3 * RBI_BANK_RATE
-    months = _whole_months(ad, as_of)
-    accrued = invoice.amount * (1 + annual_rate / 12) ** months
-    return accrued - invoice.amount
+    monthly_rate = annual_rate / 12
+    daily_rate = annual_rate / 365  # actual/365 day-count convention
+
+    whole_months, leftover_days = _months_and_days(ad, as_of)
+
+    # Step 1: compound the whole months.
+    balance = invoice.amount * (1 + monthly_rate) ** whole_months
+    # Step 2: simple interest on the leftover days, on the compounded balance.
+    leftover_interest = balance * daily_rate * leftover_days
+
+    total = balance + leftover_interest
+    return total - invoice.amount
 
 
 def decide(invoice: Invoice, now: date) -> Decision:
