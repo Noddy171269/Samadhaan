@@ -1,0 +1,461 @@
+{
+  "summary": {
+    "total_invoices": 55,
+    "action_histogram": {
+      "GENTLE_REMINDER": 8,
+      "FIRM_REMINDER": 32,
+      "ROUTE_TO_HUMAN": 6,
+      "STOP_AND_ESCALATE": 6,
+      "NO_ACTION": 3
+    },
+    "total_statutory_interest": 224031.2,
+    "recovered_track": 40,
+    "escalated": 6,
+    "exceptions": 6,
+    "no_action": 3,
+    "llm_classified": 0,
+    "fallback_classified": 55
+  },
+  "invoices": [
+    {
+      "invoice_id": "INV-0001",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 20432.99,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0002",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 1990.22,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0003",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 5589.79,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0004",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 9635.28,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0005",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 9844.46,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0006",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 6357.4,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0007",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 9103.39,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0008",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 1668.51,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0009",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 3942.07,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0010",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 6572.71,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0011",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 7346.46,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0012",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 10307.52,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0013",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 17856.61,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0014",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 2543.19,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0015",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 1782.46,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0016",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 6125.35,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0017",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 21329.66,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0018",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 6523.8,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0019",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 1572.91,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0020",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 15368.66,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0021",
+      "action": "GENTLE_REMINDER",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Approaching appointed day; courtesy reminder"
+    },
+    {
+      "invoice_id": "INV-0022",
+      "action": "GENTLE_REMINDER",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Approaching appointed day; courtesy reminder"
+    },
+    {
+      "invoice_id": "INV-0023",
+      "action": "GENTLE_REMINDER",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Approaching appointed day; courtesy reminder"
+    },
+    {
+      "invoice_id": "INV-0024",
+      "action": "GENTLE_REMINDER",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Approaching appointed day; courtesy reminder"
+    },
+    {
+      "invoice_id": "INV-0025",
+      "action": "GENTLE_REMINDER",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Approaching appointed day; courtesy reminder"
+    },
+    {
+      "invoice_id": "INV-0026",
+      "action": "GENTLE_REMINDER",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Approaching appointed day; courtesy reminder"
+    },
+    {
+      "invoice_id": "INV-0027",
+      "action": "GENTLE_REMINDER",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Approaching appointed day; courtesy reminder"
+    },
+    {
+      "invoice_id": "INV-0028",
+      "action": "GENTLE_REMINDER",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Approaching appointed day; courtesy reminder"
+    },
+    {
+      "invoice_id": "INV-0029",
+      "action": "ROUTE_TO_HUMAN",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "none",
+      "reason": "Invoice disputed by buyer; removed from automated chase"
+    },
+    {
+      "invoice_id": "INV-0030",
+      "action": "ROUTE_TO_HUMAN",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "none",
+      "reason": "Invoice disputed by buyer; removed from automated chase"
+    },
+    {
+      "invoice_id": "INV-0031",
+      "action": "ROUTE_TO_HUMAN",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "none",
+      "reason": "Invoice disputed by buyer; removed from automated chase"
+    },
+    {
+      "invoice_id": "INV-0032",
+      "action": "ROUTE_TO_HUMAN",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "none",
+      "reason": "Invoice disputed by buyer; removed from automated chase"
+    },
+    {
+      "invoice_id": "INV-0033",
+      "action": "ROUTE_TO_HUMAN",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "none",
+      "reason": "Invoice disputed by buyer; removed from automated chase"
+    },
+    {
+      "invoice_id": "INV-0034",
+      "action": "ROUTE_TO_HUMAN",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "none",
+      "reason": "Invoice disputed by buyer; removed from automated chase"
+    },
+    {
+      "invoice_id": "INV-0035",
+      "action": "STOP_AND_ESCALATE",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "none",
+      "reason": "Contact cap reached; escalating to human owner"
+    },
+    {
+      "invoice_id": "INV-0036",
+      "action": "STOP_AND_ESCALATE",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "none",
+      "reason": "Contact cap reached; escalating to human owner"
+    },
+    {
+      "invoice_id": "INV-0037",
+      "action": "STOP_AND_ESCALATE",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "none",
+      "reason": "Contact cap reached; escalating to human owner"
+    },
+    {
+      "invoice_id": "INV-0038",
+      "action": "STOP_AND_ESCALATE",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "none",
+      "reason": "Contact cap reached; escalating to human owner"
+    },
+    {
+      "invoice_id": "INV-0039",
+      "action": "STOP_AND_ESCALATE",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "none",
+      "reason": "Contact cap reached; escalating to human owner"
+    },
+    {
+      "invoice_id": "INV-0040",
+      "action": "STOP_AND_ESCALATE",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "none",
+      "reason": "Contact cap reached; escalating to human owner"
+    },
+    {
+      "invoice_id": "INV-0041",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0042",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0043",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0044",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0045",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0046",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 18160.86,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0047",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 4992.37,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0048",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 3667.33,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0049",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 4505.17,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0050",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 12083.28,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0051",
+      "action": "NO_ACTION",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "none",
+      "reason": "Before reminder window; no action"
+    },
+    {
+      "invoice_id": "INV-0052",
+      "action": "NO_ACTION",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "none",
+      "reason": "Before reminder window; no action"
+    },
+    {
+      "invoice_id": "INV-0053",
+      "action": "NO_ACTION",
+      "interest_owed": 0.0,
+      "classification_source": "fallback",
+      "channel": "none",
+      "reason": "Before reminder window; no action"
+    },
+    {
+      "invoice_id": "INV-0054",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 8445.88,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    },
+    {
+      "invoice_id": "INV-0055",
+      "action": "FIRM_REMINDER",
+      "interest_owed": 6282.9,
+      "classification_source": "fallback",
+      "channel": "email",
+      "reason": "Past appointed day; statutory interest accruing"
+    }
+  ]
+}
