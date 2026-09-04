@@ -93,11 +93,21 @@ def _parse(raw: str) -> Classification:
 
 
 def active_provider() -> str | None:
-    """Which LLM provider is configured right now, by which key is set (or None).
+    """Which LLM provider is configured right now (or None to force fallback).
 
-    Anthropic is preferred; the free-tier providers are used only as alternates.
-    Read at call time so setting a key in the shell takes effect immediately.
+    An explicit LLM_PROVIDER env var wins over auto-detection — set it to
+    "gemini" / "groq" / "anthropic" to pin the provider regardless of which other
+    keys happen to be set (handy when a stale, unfunded key would otherwise be
+    preferred), or "none" to force the fallback path. Otherwise the provider is
+    auto-detected by which key is present, Anthropic first. Read at call time so a
+    shell change takes effect immediately.
     """
+    override = os.environ.get("LLM_PROVIDER", "").strip().lower()
+    if override in {"anthropic", "groq", "gemini"}:
+        return override
+    if override == "none":
+        return None
+
     if os.environ.get("ANTHROPIC_API_KEY"):
         return "anthropic"
     if os.environ.get("GROQ_API_KEY"):
