@@ -5,8 +5,10 @@ simulated deterministically. Also confirms the iron rule — the classifier's ou
 never changes the engine's action.
 """
 
+import os
+
 from generate_data import REFERENCE_NOW, load_invoices
-from classifier import FALLBACK, Classification, Classifier
+from classifier import FALLBACK, Classification, Classifier, active_provider
 from engine import decide
 
 VALID = '{"urgency":"high","customer_reliability":"chronic_late","suggested_tone":"firm"}'
@@ -73,6 +75,27 @@ def test_batch_completes_with_default_classifier():
         assert r.urgency in ("low", "medium", "high")
 
 
+def test_active_provider_prefers_anthropic_then_free_tiers():
+    saved = {k: os.environ.get(k) for k in ("ANTHROPIC_API_KEY", "GROQ_API_KEY", "GEMINI_API_KEY")}
+    try:
+        for k in saved:
+            os.environ.pop(k, None)
+        assert active_provider() is None  # nothing set → fall back
+
+        os.environ["GEMINI_API_KEY"] = "x"
+        assert active_provider() == "gemini"
+        os.environ["GROQ_API_KEY"] = "x"
+        assert active_provider() == "groq"  # groq outranks gemini
+        os.environ["ANTHROPIC_API_KEY"] = "x"
+        assert active_provider() == "anthropic"  # anthropic preferred
+    finally:
+        for k, v in saved.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+
+
 def test_classification_does_not_change_engine_action():
     # Iron rule: whatever the classifier says, decide() is unaffected — it takes no
     # classification at all. Same action with wildly different annotations.
@@ -94,6 +117,7 @@ if __name__ == "__main__":
         test_out_of_range_value_falls_back,
         test_raising_call_falls_back,
         test_batch_completes_with_default_classifier,
+        test_active_provider_prefers_anthropic_then_free_tiers,
         test_classification_does_not_change_engine_action,
     ):
         fn()

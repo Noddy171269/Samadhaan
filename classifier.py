@@ -14,6 +14,8 @@ state how many invoices used the model versus the fallback.
 """
 
 import json
+import os
+import urllib.request
 from dataclasses import dataclass
 from datetime import date
 
@@ -21,6 +23,15 @@ from datetime import date
 # call is all this needs. (Spec: claude-sonnet-4-6 or a similar current model.)
 CLASSIFIER_MODEL = "claude-sonnet-4-6"
 MAX_TOKENS = 150  # this is a short JSON reply — keep it cheap
+
+# Free-tier fallback providers, so the LLM path can be demonstrated without setting
+# up Anthropic billing. Anthropic remains the preferred provider; these are used only
+# when no ANTHROPIC_API_KEY is present. NOTE: using a non-Anthropic model is a
+# deliberate departure from CLAUDE.md's "Anthropic API" design, made purely to show a
+# live classification for free — disclose it in the writeup. Models are env-overridable.
+GROQ_MODEL = os.environ.get("GROQ_MODEL", "llama-3.1-8b-instant")
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash")
+_HTTP_TIMEOUT = 30  # seconds — one shot, no retries
 
 _URGENCY = {"low", "medium", "high"}
 _RELIABILITY = {"reliable", "chronic_late", "unknown"}
@@ -81,18 +92,70 @@ def _parse(raw: str) -> Classification:
     return Classification(urgency, reliability, tone, source="llm")
 
 
-class Classifier:
-    """Wraps the single Anthropic call with a graceful fallback.
+def active_provider() -> str | None:
+    """Which LLM provider is configured right now, by which key is set (or None).
 
-    The LLM call is injectable (`call_fn`) so tests can exercise the success and
-    failure paths without a network or an API key.
+    Anthropic is preferred; the free-tier providers are used only as alternates.
+    Read at call time so setting a key in the shell takes effect immediately.
+    """
+    if os.environ.get("ANTHROPIC_API_KEY"):
+        return "anthropic"
+    if os.environ.get("GROQ_API_KEY"):
+        return "groq"
+    if os.environ.get("GEMINI_API_KEY"):
+        return "gemini"
+    return None
+
+
+def _http_post_json(url: str, headers: dict, payload: dict) -> dict:
+    data = json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(
+        url, data=data, headers={**headers, "Content-Type": "application/json"}, method="POST"
+    )
+    with urllib.request.urlopen(req, timeout=_HTTP_TIMEOUT) as resp:
+        return json.loads(resp.read().decode("utf-8"))
+
+
+def _call_groq(prompt: str) -> str:
+    # Groq's OpenAI-compatible endpoint. Key goes in the Authorization header.
+    resp = _http_post_json(
+        "https://api.groq.com/openai/v1/chat/completions",
+        {"Authorization": f"Bearer {os.environ['GROQ_API_KEY']}"},
+        {
+            "model": GROQ_MODEL,
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": MAX_TOKENS,
+            "temperature": 0,
+        },
+    )
+    return resp["choices"][0]["message"]["content"]
+
+
+def _call_gemini(prompt: str) -> str:
+    # Gemini: key in the x-goog-api-key header (never in the URL query string).
+    resp = _http_post_json(
+        f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent",
+        {"x-goog-api-key": os.environ["GEMINI_API_KEY"]},
+        {
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {"maxOutputTokens": MAX_TOKENS, "temperature": 0},
+        },
+    )
+    return resp["candidates"][0]["content"]["parts"][0]["text"]
+
+
+class Classifier:
+    """Wraps a single LLM call with a graceful fallback.
+
+    Provider is chosen by which API key is set (Anthropic preferred, then the free
+    Groq / Gemini tiers). The LLM call is injectable (`call_fn`) so tests can
+    exercise the success and failure paths without a network or an API key.
     """
 
     def __init__(self, model: str = CLASSIFIER_MODEL, call_fn=None):
         self._model = model
         self._call_fn = call_fn or self._default_call
-        self._client = None
-        self._client_unavailable = False  # memoized: skip once we know it can't work
+        self._anthropic_client = None
 
     def classify(self, invoice, as_of: date) -> Classification:
         """Annotate one invoice. Never raises — any failure yields FALLBACK."""
@@ -108,26 +171,22 @@ class Classifier:
 
     # --- the real LLM call (skipped entirely when injected) ---
 
-    def _get_client(self):
-        if self._client is not None:
-            return self._client
-        if self._client_unavailable:
-            raise RuntimeError("classifier unavailable (no anthropic SDK or credentials)")
-        # First real attempt: importing or constructing may fail (SDK absent, no key).
-        # Memoize the failure so the remaining invoices fall back fast instead of
-        # each re-attempting — one clean try, then a cheap short-circuit.
-        try:
+    def _default_call(self, prompt: str) -> str:
+        provider = active_provider()
+        if provider == "anthropic":
+            return self._call_anthropic(prompt)
+        if provider == "groq":
+            return _call_groq(prompt)
+        if provider == "gemini":
+            return _call_gemini(prompt)
+        raise RuntimeError("no LLM provider configured (set ANTHROPIC_API_KEY / GROQ_API_KEY / GEMINI_API_KEY)")
+
+    def _call_anthropic(self, prompt: str) -> str:
+        if self._anthropic_client is None:
             import anthropic
 
-            self._client = anthropic.Anthropic()
-            return self._client
-        except Exception:
-            self._client_unavailable = True
-            raise
-
-    def _default_call(self, prompt: str) -> str:
-        client = self._get_client()
-        resp = client.messages.create(
+            self._anthropic_client = anthropic.Anthropic()
+        resp = self._anthropic_client.messages.create(
             model=self._model,
             max_tokens=MAX_TOKENS,
             messages=[{"role": "user", "content": prompt}],

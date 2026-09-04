@@ -13,7 +13,7 @@ from datetime import date
 
 from action_composer import compose
 from audit import Audit
-from classifier import Classifier
+from classifier import Classifier, active_provider
 from engine import decide
 from generate_data import load_invoices
 
@@ -37,6 +37,15 @@ def run() -> Audit:
 
 
 if __name__ == "__main__":
+    provider = active_provider()
+    if provider:
+        print(f"LLM provider: {provider} (invoices classified live; failures fall back).")
+    else:
+        print(
+            "LLM provider: none - no API key set, so every invoice will fall back.\n"
+            "Set GROQ_API_KEY, GEMINI_API_KEY, or ANTHROPIC_API_KEY to classify live."
+        )
+    print()
     audit = run()
     audit.print_report()
     audit.write_json()
